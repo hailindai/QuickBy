@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.florist.cart.mapper.CartMapper">
+<!-- 查询 -->
+<select id="queryCart"  parameterType="String" resultType="CartInfo">
+ select * from cart_info where user_Id=#{userId};
+</select>
+
+<select id="queryOne" parameterType="cartInfo" resultType="CartInfo">
+select * from cart_info where user_id=#{userId} and product_id=#{productId};
+</select>
+<!-- 新增 -->
+<insert id="addCart" parameterType="CartInfo">
+insert into cart_info(
+cart_id,
+user_id,
+product_id,
+product_name,
+product_count,
+total_price
+)values(
+#{cartId},
+#{userId},
+#{productId},
+#{productName},
+#{productCount},
+#{totalPrice}
+)
+</insert>
+<!-- 更新 -->
+<update id="updateProductCount" parameterType="CartInfo">
+update cart_info set product_count=#{productCount} where user_id=#{userId}
+		and product_id=#{productId};
+</update>
+
+<!-- 删除 -->
+<delete id="deleteCart" parameterType="CartInfo">
+ delete from cart_info where user_id=#{userId} and product_id=#{productId};
+</delete>
+
+</mapper>

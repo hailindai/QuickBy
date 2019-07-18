@@ -1,0 +1,21 @@
+package com.florist;
+
+import org.mybatis.spring.annotation.MapperScan;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+
+/**
+ * 用户模块
+ *
+ */
+@SpringBootApplication
+@MapperScan("com.florist.user.mapper")
+@EnableEurekaClient
+public class StarterUser
+{
+    public static void main( String[] args )
+    {
+        SpringApplication.run(StarterUser.class, args);
+    }
+}

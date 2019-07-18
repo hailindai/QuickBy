@@ -1,0 +1,41 @@
+Elasticsearch集群搭建及词项查询的实现
+
+一、Elasticsearch集群搭建
+1.linux的环境配置（3台虚拟机相同）
+（1）将etc/security/limits.d/90-nproc.conf该文件中的线程上限改为2048。
+（2）将vim /etc/sysctl.conf该文件中的vm.max_map_count的key对应的内存占用值655360。
+
+2.es节点配置
+修改config中的elasticsearch.yml文件，其中修改内容为
+cluster.name:elasticsearch
+node.name:es01
+bootstrap.memory_lock:false
+bootstrap.system_call_filter:false
+network.host:本机IP地址
+http.port:9200
+文本末尾添加：http.cors.enabled:true
+http.cors.allow-origin:"*"
+
+3.添加新用户
+添加一个具有操作es权限的用户es，执行chown -R es:es /home/software/elasticsearch-5.5.2为es用户添加可以操作elasticsearch的权限。
+
+4.配置3个节点集群效果
+（1）三个节点的集群名称要相同
+（2）节点名称在同一个集群不同es01 es02 es03
+（3）配置协调器，从3个节点中选取2个节点做配置协调器
+（4）最小master数量改为2
+
+二、使用transportclient连接es集群
+1.创建对应工程，添加es相关依赖。
+2.创建es配置类。
+3.创建一个连接ES的对象client，并传入默认配置的参数。
+4.将3个节点连接到负载均衡器。
+
+三、读取数据库源数据并导入es索引
+1.在SearchController中创建Floindex方法，和search对象。并由search对象调用sevice层中的方法，以返回结果，返回成功则在页面显示“success”,出现异常则在页面显示“fail”。
+2.在SearchService中创建create方法，并创建一个封装读取所有源数据的pList对象，用来接收searchmapper读取的数据。再创建一个request对象作为请求建立索引的对象，并传入对应参数，最后用get方法完成把源数据存入floindex索引文件。
+3.通过接口searchmapper，映射到searchmapper.xml文件，写入sql语句读取出数据库所有数据。将数据返回封装给pList对象。
+
+四、实现词项查询功能
+1.在SearchController中创建queryProduct方法和pList对象，调用SearchService中的query方法接收查询结果。
+2.创建query方法，给定productName, page, rows三个参数。创建matchQuery和response对象，接收匹配查询的结果。通过hit对象拿到一串数组，对该数组进行遍历，返回到容器pList对象中。遍历一次返回一个product对象，将product对象添加到pList容器中。
